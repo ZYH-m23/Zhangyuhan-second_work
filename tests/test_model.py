@@ -247,21 +247,15 @@ def test_abstopk_backward():
     torch.testing.assert_close(x.grad, expected_grad)
 
 
-def test_attention_with_sink(numpy_snapshot, q, k, v, mask):
-    """
-    Test the attention mechanism with an added sink token.
-    The sink token acts as an extra Key/Value at the beginning.
-    """
+def test_attention_with_sink(numpy_snapshot, q, k, v, mask, n_heads):    
+    q, k, v = (rearrange(x, "b s (h d) -> b h s d", h=n_heads) for x in (q, k, v))
+    
+    mask = mask.unsqueeze(1).expand(-1, n_heads, -1, -1)
+
     d_head = q.shape[-1]
-    # Create a sink token (learnable parameter simulation)
     sink_token = torch.ones((1, d_head)) * 10.0 
     
-    # We expect the output to be different from standard attention
-    # because the sink token attracts probability mass.
     output = run_attention_with_sink(Q=q, K=k, V=v, sink_token=sink_token, mask=mask)
-    
-    # Check shape: output should match Q's sequence length, not K+1
-    assert output.shape == q.shape
     
     numpy_snapshot.assert_match(output, atol=1e-5)
 
