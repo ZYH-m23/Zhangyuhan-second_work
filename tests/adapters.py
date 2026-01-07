@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import sys
 import os
+import importlib
 from collections.abc import Iterable
 from typing import IO, Any, BinaryIO
 
@@ -9,6 +11,19 @@ import torch
 from jaxtyping import Bool, Float, Int
 from torch import Tensor
 
+current_working_dir = os.getcwd()
+if current_working_dir not in sys.path:
+    sys.path.append(current_working_dir)
+
+try:
+    import submission
+    importlib.reload(submission)
+    HAS_SUBMISSION = True
+
+except ImportError:
+    HAS_SUBMISSION = False
+    print(f"Warning: submission.py not found in {current_working_dir}, using default/empty implementation.")
+    
 
 def run_linear(
     d_in: int,
