@@ -899,7 +899,7 @@ def run_train_bpe(
 
     return vocab, merges
 
-
+# --- 2. Tokenizer 逻辑 ---
 class BPETokenizer:
     def __init__(self, vocab, merges, special_tokens):
         self.vocab = vocab
@@ -1099,6 +1099,14 @@ if __name__ == "__main__":
         encoded = tokenizer.encode(test_text)
         
         print(f"Test text: '{test_text}'")
-        print(f"Encoded IDs: {encoded})
+        print(f"Encoded IDs: {encoded}")
+
+
+
+
+
+
+
+
 
        
